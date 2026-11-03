@@ -1,51 +1,95 @@
-# Linear Regression (Ridge Regression – nghiệm đóng)
+# Linear Regression (Hồi quy tuyến tính – Ridge Regression)
 
-> Mã nguồn: `src/models/linear_regression.py` | Mô hình: `save_models/linear_regression.npy` | Đánh giá: `reports/results.csv`
+> Mã nguồn: `src/models/linear_regression.py` | Lớp cơ sở: `src/models/base.py` | Mô hình lưu: `.npy`
 
 ## 1. Mục tiêu
 
-Xây dựng mô hình hồi quy tuyến tính làm baseline để dự đoán doanh số `Item_Outlet_Sales` từ các đặc trưng sản phẩm và cửa hàng. Mô hình sử dụng regularization L2 (Ridge) nhằm hạn chế overfitting khi có nhiều đặc trưng.
+Xây dựng mô hình hồi quy tuyến tính để dự đoán doanh số sản phẩm `Item_Outlet_Sales` dựa trên các đặc trưng của sản phẩm và cửa hàng.
+
+Mô hình tìm mối quan hệ tuyến tính giữa các biến đầu vào và doanh số đầu ra. Ngoài ra, sử dụng Ridge Regularization (L2) để hạn chế các hệ số trở nên quá lớn, giúp mô hình ổn định hơn khi có nhiều đặc trưng.
+
+Trong dự án, Linear Regression được sử dụng làm mô hình cơ sở để so sánh với Decision Tree, Random Forest và Gradient Boosting.
 
 ## 2. Input / Output
 
-|                              | Kiểu                       | Shape            | Ý nghĩa                                       |
-| ---------------------------- | -------------------------- | ---------------- | --------------------------------------------- |
-| Input `fit(X, y)`            | `np.ndarray`, `np.ndarray` | `(n, p)`, `(n,)` | `X`: ma trận đặc trưng; `y`: doanh số thực tế |
-| Output `predict(X)`          | `np.ndarray`               | `(n,)`           | Doanh số dự đoán cho `n` mẫu                  |
-| Model attribute `coef_`      | `np.ndarray`               | `(p,)`           | Hệ số của các đặc trưng trên thang đo gốc     |
-| Model attribute `intercept_` | `float`                    | —                | Hệ số chặn trên thang đo gốc                  |
+|                     | Kiểu                       | Shape            | Ý nghĩa                                           |
+| ------------------- | -------------------------- | ---------------- | ------------------------------------------------- |
+| Input `fit(X, y)`   | `np.ndarray`, `np.ndarray` | `(n, p)`, `(n,)` | `X` là ma trận đặc trưng, `y` là doanh số thực tế |
+| Input `predict(X)`  | `np.ndarray`               | `(m, p)`         | Dữ liệu cần dự đoán                               |
+| Output `predict(X)` | `np.ndarray`               | `(m,)`           | Doanh số dự đoán của từng mẫu                     |
+| `coef_`             | `np.ndarray`               | `(p,)`           | Các hệ số tương ứng với đặc trưng                 |
+| `intercept_`        | `float`                    | —                | Hệ số chặn của mô hình                            |
 
-Tham số: `alpha=0.0` là hệ số phạt L2. Trong lần tuning hiện tại, `alpha=10` được lựa chọn. Gọi `predict` trước `fit` sẽ phát sinh `RuntimeError`.
+Trong đó:
 
-## 3. Tiêu chí đánh giá (evaluation metric / criteria)
+- `n`: số mẫu dùng để huấn luyện.
+- `m`: số mẫu cần dự đoán.
+- `p`: số đặc trưng đầu vào.
 
-- **MAE**: sai số tuyệt đối trung bình giữa doanh số thực tế và dự đoán.
-- **MSE**: trung bình bình phương sai số.
-- **RMSE**: căn bậc hai của MSE; càng thấp càng tốt.
-- **R²**: mức độ mô hình giải thích biến thiên của doanh số; càng cao càng tốt.
-- Tuning dùng 5-fold Cross Validation với RMSE; lưới `alpha ∈ {0, 1, 10, 100}`.
+Tham số chính:
+
+- `alpha=0.0`: hệ số điều chỉnh mức phạt L2. Alpha càng lớn thì mức regularization càng mạnh.
+
+## 3. Công thức và tiêu chí đánh giá
+
+Mô hình hồi quy tuyến tính có dạng:
+
+`y_pred = w0 + w1*x1 + w2*x2 + ... + wp*xp`
+
+Trong đó:
+
+- `w0`: hệ số chặn.
+- `w1, w2, ..., wp`: trọng số của các đặc trưng.
+- `x1, x2, ..., xp`: các giá trị đầu vào.
+
+Hàm mục tiêu Ridge Regression:
+
+`Loss = ||Xw - y||² + alpha * ||w||²`
+
+Hệ số chặn không bị áp dụng regularization.
+
+Các chỉ số đánh giá:
+
+- **MAE:** Sai số tuyệt đối trung bình.
+- **MSE:** Sai số bình phương trung bình.
+- **RMSE:** Căn bậc hai của MSE.
+- **R²:** Đánh giá mức độ mô hình giải thích sự biến thiên của doanh số.
 
 Kết quả trên tập test (`reports/results.csv`):
 
-|          MSE |    MAE |     RMSE |     R² |
-| -----------: | -----: | -------: | -----: |
-| 1,236,646.47 | 823.42 | 1,112.05 | 0.5696 |
+|    MAE |          MSE |     RMSE |     R² |
+| -----: | -----------: | -------: | -----: |
+| 823.42 | 1,236,646.47 | 1,112.05 | 0.5696 |
 
-Siêu tham số được chọn: `alpha=10` (CV RMSE = 1138.49). Đây là kết quả thấp hơn về hiệu suất so với ba mô hình còn lại trong lần thực nghiệm hiện tại.
+Siêu tham số được lựa chọn trong quá trình tuning: `alpha=10`.
 
 ## 4. Cách hoạt động (How it works)
 
-1. **Chuẩn hóa đặc trưng**: tính và lưu `x_mean_`, `x_std_` từ tập train; nếu một cột có độ lệch chuẩn bằng 0 thì thay bằng 1. Tạo `Xs = (X - mean) / std`.
-2. **Thêm bias**: ghép một cột 1 vào `Xs` để tạo ma trận `Xb = [1, Xs]`.
-3. **Tìm nghiệm Ridge**: giải `(Xb.T @ Xb + αI)w = Xb.T @ y` bằng `np.linalg.solve`; nếu ma trận suy biến thì dùng `np.linalg.lstsq`. Phần tử phạt tại vị trí intercept được đặt bằng 0 nên không regularize hệ số chặn.
-4. **Đưa hệ số về thang đo gốc**: tính `coef_ = w[1:] / std` và `intercept_ = w[0] - coef_ @ mean`.
-5. **Dự đoán**: áp dụng phép chuẩn hóa đã lưu cho dữ liệu đầu vào rồi tính `ŷ = Xb @ w`.
-
-Công thức tối ưu: `argmin_w ||Xb @ w - y||² + alpha * ||w[1:]||²`.
+1. Nhận dữ liệu đầu vào `X` và nhãn thực tế `y`, kiểm tra số dòng giữa hai dữ liệu phải bằng nhau.
+2. Tính giá trị trung bình và độ lệch chuẩn của từng đặc trưng trên tập train để chuẩn hóa dữ liệu. Nếu một cột có độ lệch chuẩn bằng 0 thì thay bằng 1.
+3. Thêm một cột có giá trị 1 vào ma trận đặc trưng để biểu diễn hệ số chặn.
+4. Tính nghiệm của bài toán Ridge bằng phương pháp đại số tuyến tính. Nếu phép giải ma trận không thành công thì sử dụng phương pháp least squares dự phòng.
+5. Lưu các trọng số, trung bình và độ lệch chuẩn để sử dụng khi dự đoán.
+6. Khi nhận dữ liệu mới, thực hiện chuẩn hóa bằng các giá trị đã lưu, sau đó tính kết quả dự đoán.
 
 ## 5. Dữ liệu sử dụng (Data used)
 
-- Nguồn: `data/processed/train.csv` và `data/processed/test.csv`.
-- Tập train gồm 6.819 mẫu, tập test gồm 1.704 mẫu; mỗi mẫu có 52 đặc trưng và target `Item_Outlet_Sales`.
-- Đặc trưng gồm các cột số, `product_freq` và các cột One-Hot Encoding được tạo trong bước tiền xử lý.
-- Chỉ dùng tập train để tính thống kê chuẩn hóa và fit mô hình; tập test chỉ dùng để đánh giá.
+- Dữ liệu được lấy từ `data/processed/train.csv` và `data/processed/test.csv`.
+- Tập train có 6.819 mẫu, tập test có 1.704 mẫu.
+- Mỗi mẫu gồm 52 đặc trưng sau tiền xử lý.
+- Biến mục tiêu là `Item_Outlet_Sales`.
+- Các đặc trưng đầu vào gồm dữ liệu số, đặc trưng được tạo thêm và các cột đã mã hóa One-Hot Encoding.
+
+Chỉ sử dụng tập train để tính các thống kê chuẩn hóa và huấn luyện mô hình. Tập test được giữ riêng để đánh giá.
+
+## 6. Yêu cầu triển khai code
+
+- Tạo lớp `LinearRegression` kế thừa từ `BaseRegressor`.
+- Sử dụng NumPy để thực hiện các phép tính ma trận.
+- Không sử dụng `sklearn.linear_model` hoặc thư viện có sẵn để thay thế thuật toán.
+- Cần có hai phương thức chính `fit(X, y)` và `predict(X)`.
+- Lưu các thuộc tính đã học gồm `w_`, `x_mean_`, `x_std_`, `coef_` và `intercept_`.
+- Kiểm tra dữ liệu đầu vào, báo lỗi nếu `X` không phải ma trận 2 chiều hoặc số mẫu không khớp với `y`.
+- Nếu gọi `predict()` trước khi `fit()` thì phải thông báo lỗi rõ ràng.
+- Hỗ trợ `get_params()`, `set_params()`, `clone()` và cơ chế lưu/nạp mô hình thông qua `BaseRegressor`.
+- Kết quả dự đoán phải là mảng NumPy một chiều.
