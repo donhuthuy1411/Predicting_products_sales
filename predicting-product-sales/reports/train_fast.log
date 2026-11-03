@@ -1,0 +1,33 @@
+train: X=(6819, 52), y=(6819,)  [chế độ --fast: tuning trên 20% train]
+
+=== linear_regression ===
+  1/4 {'alpha': 0} -> rmse=1127.9412 (0.0s)
+  2/4 {'alpha': 1} -> rmse=1127.9077 (0.0s)
+  3/4 {'alpha': 10} -> rmse=1127.6458 (0.0s)
+  4/4 {'alpha': 100} -> rmse=1128.3054 (0.0s)
+best_params={'alpha': 10} | tune 0.0s, train full 0.0s -> models/linear_regression.pkl
+
+=== decision_tree ===
+  1/6 {'max_depth': 4, 'min_samples_leaf': 5} -> rmse=1118.9069 (0.1s)
+  2/6 {'max_depth': 4, 'min_samples_leaf': 20} -> rmse=1110.4576 (0.1s)
+  3/6 {'max_depth': 8, 'min_samples_leaf': 5} -> rmse=1213.4666 (0.3s)
+  4/6 {'max_depth': 8, 'min_samples_leaf': 20} -> rmse=1126.9281 (0.2s)
+  5/6 {'max_depth': 12, 'min_samples_leaf': 5} -> rmse=1298.1072 (0.6s)
+  6/6 {'max_depth': 12, 'min_samples_leaf': 20} -> rmse=1129.1770 (0.3s)
+best_params={'max_depth': 4, 'min_samples_leaf': 20} | tune 1.6s, train full 0.0s -> models/decision_tree.pkl
+
+=== random_forest ===
+  1/4 {'n_estimators': 30, 'max_depth': 8} -> rmse=1115.8884 (4.4s)
+  2/4 {'n_estimators': 30, 'max_depth': 12} -> rmse=1118.5920 (8.7s)
+  3/4 {'n_estimators': 60, 'max_depth': 8} -> rmse=1109.2966 (10.0s)
+  4/4 {'n_estimators': 60, 'max_depth': 12} -> rmse=1111.5062 (19.7s)
+best_params={'n_estimators': 60, 'max_depth': 8} | tune 42.8s, train full 6.8s -> models/random_forest.pkl
+
+=== gradient_boosting ===
+  1/4 {'n_estimators': 50, 'learning_rate': 0.05, 'max_depth': 3} -> rmse=1094.6443 (4.7s)
+  2/4 {'n_estimators': 50, 'learning_rate': 0.1, 'max_depth': 3} -> rmse=1099.9820 (4.9s)
+  3/4 {'n_estimators': 100, 'learning_rate': 0.05, 'max_depth': 3} -> rmse=1097.4703 (6.4s)
+  4/4 {'n_estimators': 100, 'learning_rate': 0.1, 'max_depth': 3} -> rmse=1119.4439 (5.7s)
+best_params={'n_estimators': 50, 'learning_rate': 0.05, 'max_depth': 3} | tune 21.8s, train full 2.4s -> models/gradient_boosting.pkl
+
+Đã lưu D:\Code\predicting-product-sales\reports/tuning_results.csv và D:\Code\predicting-product-sales\models/best_params.json

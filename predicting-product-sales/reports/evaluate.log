@@ -1,0 +1,13 @@
+linear_regression    mse=1236646.47 mae=823.42 rmse=1112.05 r2=0.5696
+decision_tree        mse=1152400.45 mae=752.64 rmse=1073.50 r2=0.5989
+random_forest        mse=1135939.87 mae=745.86 rmse=1065.80 r2=0.6046
+gradient_boosting    mse=1115280.05 mae=740.56 rmse=1056.07 r2=0.6118
+
+Bảng kết quả (sắp xếp theo rmse) -> D:\Code\predicting-product-sales\reports/results.csv
+            model          mse      mae      rmse     r2
+gradient_boosting 1115280.0549 740.5619 1056.0682 0.6118
+    random_forest 1135939.8709 745.8650 1065.8048 0.6046
+    decision_tree 1152400.4455 752.6379 1073.4992 0.5989
+linear_regression 1236646.4745 823.4173 1112.0461 0.5696
+Mô hình tốt nhất: gradient_boosting -> D:\Code\predicting-product-sales\models/best_model.txt
+Đã lưu hình đánh giá vào D:\Code\predicting-product-sales\reports\figures

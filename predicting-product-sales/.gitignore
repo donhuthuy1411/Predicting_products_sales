@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+data/raw/*.csv
+data/processed/*.csv
+save_models/*.npy
+.venv/

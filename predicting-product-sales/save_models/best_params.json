@@ -1,0 +1,18 @@
+{
+  "linear_regression": {
+    "alpha": 10
+  },
+  "decision_tree": {
+    "max_depth": 4,
+    "min_samples_leaf": 20
+  },
+  "random_forest": {
+    "n_estimators": 60,
+    "max_depth": 12
+  },
+  "gradient_boosting": {
+    "n_estimators": 100,
+    "learning_rate": 0.05,
+    "max_depth": 3
+  }
+}

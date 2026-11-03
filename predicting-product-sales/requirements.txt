@@ -1,0 +1,5 @@
+numpy
+pandas
+matplotlib
+pytest
+# KHÔNG dùng scikit-learn — mô hình tự cài đặt bằng numpy trong src/models/
